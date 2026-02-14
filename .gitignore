@@ -1,0 +1,26 @@
+# Environment variables (IMPORTANT - don't upload API keys!)
+.env
+.env.local
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+env/
+
+# Chroma database (will recreate on deploy)
+chroma_db/
+
+# Streamlit cache
+.streamlit/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

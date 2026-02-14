@@ -1,0 +1,248 @@
+[
+  {
+    "name": "Pradhan Mantri Awas Yojana (PMAY)",
+    "category": "Housing",
+    "eligibility": {
+      "income_max_EWS": 300000,
+      "income_max_LIG": 600000,
+      "income_max_MIG": 900000,
+      "age_min": 18,
+      "states": "all",
+      "house_ownership": "No pucca house anywhere in India"
+    },
+    "benefits": "Interest subsidy of 4% on first ₹8 lakh of home loan (up to ₹1.8 lakh subsidy). Central assistance up to ₹2.5 lakh per unit for EWS beneficiaries.",
+    "documents": ["Aadhaar", "Income Certificate", "Property Documents", "Bank Account Details"],
+    "link": "https://pmaymis.gov.in/"
+  },
+  {
+    "name": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (AB PM-JAY)",
+    "category": "Health",
+    "eligibility": {
+      "income_criteria": "Based on SECC 2011 deprivation criteria",
+      "age_min": 0,
+      "states": "all",
+      "additional": "Senior citizens aged 70+ eligible irrespective of income from Oct 2024"
+    },
+    "benefits": "Cashless health insurance up to ₹5 lakh per family per year for secondary and tertiary care. Extra ₹5 lakh top-up for senior citizens 70+.",
+    "documents": ["Aadhaar", "Ration Card", "PM-JAY Card"],
+    "link": "https://pmjay.gov.in/"
+  },
+  {
+    "name": "PM-KISAN Samman Nidhi",
+    "category": "Agriculture",
+    "eligibility": {
+      "occupation": "farmer",
+      "land_requirement": "All landholding farmers with cultivable land",
+      "states": "all",
+      "exclusions": "Institutional landholders, income tax payers, constitutional post holders"
+    },
+    "benefits": "₹6,000 per year in three equal installments of ₹2,000 every 4 months directly to bank account",
+    "documents": ["Aadhaar", "Land Records", "Bank Account Details"],
+    "link": "https://pmkisan.gov.in/"
+  },
+  {
+    "name": "Pradhan Mantri Jan Dhan Yojana (PMJDY)",
+    "category": "Financial Inclusion",
+    "eligibility": {
+      "age_min": 10,
+      "states": "all",
+      "requirement": "Indian citizen, no existing bank account"
+    },
+    "benefits": "Zero balance savings account, RuPay debit card with ₹2 lakh accidental insurance, overdraft facility up to ₹10,000",
+    "documents": ["Aadhaar", "PAN/Voter ID", "Address Proof", "Passport Photo"],
+    "link": "https://pmjdy.gov.in/"
+  },
+  {
+    "name": "Pradhan Mantri Ujjwala Yojana (PMUY)",
+    "category": "Energy",
+    "eligibility": {
+      "gender": "women",
+      "income_criteria": "BPL households as per SECC 2011",
+      "age_min": 18,
+      "states": "all",
+      "requirement": "No existing LPG connection in household"
+    },
+    "benefits": "Free LPG connection with first cylinder and stove. Subsidy on refills via DBT.",
+    "documents": ["Aadhaar", "BPL Certificate/SECC List", "Bank Account Details", "Address Proof"],
+    "link": "https://pmuy.gov.in/"
+  },
+  {
+    "name": "Pradhan Mantri Mudra Yojana (PMMY)",
+    "category": "MSME/Loans",
+    "eligibility": {
+      "age_min": 18,
+      "age_max": 65,
+      "business_type": "Non-farm micro enterprises in manufacturing, trading, services",
+      "states": "all"
+    },
+    "benefits": "Collateral-free loans up to ₹10 lakh: Shishu (up to ₹50,000), Kishor (₹50,001-₹5 lakh), Tarun (₹5-10 lakh)",
+    "documents": ["Identity Proof", "Address Proof", "Business Proof", "Bank Statements", "Project Report"],
+    "link": "https://mudra.org.in/"
+  },
+  {
+    "name": "Atal Pension Yojana (APY)",
+    "category": "Pension",
+    "eligibility": {
+      "age_min": 18,
+      "age_max": 40,
+      "states": "all",
+      "requirement": "Bank account holder, non-tax payer"
+    },
+    "benefits": "Guaranteed monthly pension of ₹1,000 to ₹5,000 after age 60. Spouse continues to receive pension after subscriber's death.",
+    "documents": ["Aadhaar", "Bank Account Details", "Mobile Number"],
+    "link": "https://npscra.nsdl.co.in/"
+  },
+  {
+    "name": "Sukanya Samriddhi Yojana (SSY)",
+    "category": "Girl Child Welfare",
+    "eligibility": {
+      "gender": "girl child",
+      "age_max": 10,
+      "states": "all",
+      "requirement": "Parents/legal guardians can open account"
+    },
+    "benefits": "8.2% interest rate (current), tax-free maturity. Minimum deposit ₹250/year, maximum ₹1.5 lakh/year. Maturity at 21 years or marriage after 18.",
+    "documents": ["Birth Certificate of Girl Child", "Aadhaar of Guardian", "PAN Card", "Address Proof"],
+    "link": "https://www.indiapost.gov.in/"
+  },
+  {
+    "name": "PM Surya Ghar Muft Bijli Yojana",
+    "category": "Renewable Energy",
+    "eligibility": {
+      "income_criteria": "Poor and middle-income households",
+      "states": "all",
+      "requirement": "Own residential house with suitable rooftop, valid electricity connection, no previous solar subsidy"
+    },
+    "benefits": "Subsidy up to ₹78,000 for rooftop solar installation. Up to 300 units free electricity per month. ₹30,000/kW for first 2kW, ₹18,000/kW for additional 1kW.",
+    "documents": ["Aadhaar", "Electricity Bill", "Roof Ownership Proof", "Bank Account Details"],
+    "link": "https://pmsuryaghar.gov.in/"
+  },
+  {
+    "name": "PM Vishwakarma Kaushal Samman Yojana",
+    "category": "Artisan Welfare",
+    "eligibility": {
+      "age_min": 18,
+      "occupation": "Traditional artisans in 18 notified trades (carpenter, potter, tailor, blacksmith, etc.)",
+      "states": "all",
+      "exclusions": "Not availed loans under PMEGP, PM SVANidhi, Mudra in last 5 years"
+    },
+    "benefits": "₹15,000 toolkit grant, skill training with ₹500/day stipend, collateral-free loans (₹1 lakh first, ₹2 lakh second at 5% interest)",
+    "documents": ["Aadhaar", "Bank Account", "Trade Proof", "Ration Card"],
+    "link": "https://pmvishwakarma.gov.in/"
+  },
+  {
+    "name": "NPS Vatsalya Yojana",
+    "category": "Child Pension",
+    "eligibility": {
+      "age_max": 18,
+      "states": "all",
+      "requirement": "Parents/legal guardians can open account for minor"
+    },
+    "benefits": "Pension scheme for minors with minimum ₹1,000 annual contribution. Tax benefits under Section 80C (₹1.5 lakh) and 80CCD(1B) (₹50,000). Converts to regular NPS at 18.",
+    "documents": ["Birth Certificate of Minor", "Aadhaar/PAN of Guardian", "Bank Account Details", "Photograph"],
+    "link": "https://enps.nsdl.com/"
+  },
+  {
+    "name": "PM Street Vendor's AtmaNirbhar Nidhi (PM SVANidhi)",
+    "category": "Urban Livelihood",
+    "eligibility": {
+      "occupation": "Street vendor",
+      "states": "all",
+      "requirement": "Vending in urban areas on or before March 24, 2020, with Certificate of Vending or ULB recommendation"
+    },
+    "benefits": "Collateral-free working capital loan up to ₹10,000 (first tranche), ₹20,000 (second), ₹50,000 (third). 7% interest subsidy on timely repayment, ₹1,200/year cashback on digital transactions.",
+    "documents": ["Aadhaar", "Certificate of Vending/LoR from ULB", "Bank Account", "Mobile Number linked to Aadhaar"],
+    "link": "https://pmsvanidhi.mohua.gov.in/"
+  },
+  {
+    "name": "PM SHRI Schools",
+    "category": "Education",
+    "eligibility": {
+      "target": "Existing government/government-aided schools",
+      "states": "all",
+      "requirement": "Schools with pucca building, electricity, library, separate toilets, above state-average enrollment"
+    },
+    "benefits": "Central assistance of ₹1 crore per school for 5 years. Upgraded infrastructure, modern facilities, NEP 2020 aligned education. 14,500+ schools to be developed.",
+    "documents": ["School Registration Documents", "Infrastructure Details", "Enrollment Records"],
+    "link": "https://pmshri.education.gov.in/"
+  },
+  {
+    "name": "Pradhan Mantri Matsya Sampada Yojana (PMMSY)",
+    "category": "Fisheries",
+    "eligibility": {
+      "occupation": "Fishers, fish farmers, fish workers, SHGs, FFPOs",
+      "age_min": 18,
+      "states": "all",
+      "exclusions": "Government employees, income tax payers"
+    },
+    "benefits": "Subsidy 40% of project cost (General), 60% (SC/ST/Women). Credit guarantee up to ₹2 crore. Support for fishing vessels, aquaculture, cold storage, processing units.",
+    "documents": ["Aadhaar", "Bank Passbook", "Land Records", "Project Proposal"],
+    "link": "https://dof.gov.in/"
+  },
+  {
+    "name": "Janani Suraksha Yojana (JSY)",
+    "category": "Maternal Health",
+    "eligibility": {
+      "gender": "pregnant women",
+      "age_min": 19,
+      "states": "all",
+      "requirement": "BPL families, delivery in government/accredited private health facility"
+    },
+    "benefits": "Cash assistance ₹1,400 (rural) / ₹1,000 (urban) for institutional delivery. ₹500 for home delivery (BPL only). ASHA incentive ₹600 (rural) / ₹400 (urban).",
+    "documents": ["Aadhaar", "BPL Card", "MCP Card", "Bank Account"],
+    "link": "https://nhm.gov.in/"
+  },
+  {
+    "name": "Pradhan Mantri Shram Yogi Maan-dhan (PM-SYM)",
+    "category": "Unorganized Sector Pension",
+    "eligibility": {
+      "age_min": 18,
+      "age_max": 40,
+      "income_max": 15000,
+      "occupation": "Unorganized workers (street vendors, rickshaw pullers, construction workers, etc.)",
+      "states": "all"
+    },
+    "benefits": "Assured monthly pension of ₹3,000 after age 60. 50:50 contribution model with government. Family pension 50% to spouse on death of subscriber.",
+    "documents": ["Aadhaar", "Bank Account", "Age Proof", "Income Proof"],
+    "link": "https://labour.gov.in/"
+  },
+  {
+    "name": "Pradhan Mantri Matru Vandana Yojana (PMMVY)",
+    "category": "Maternity Benefit",
+    "eligibility": {
+      "gender": "pregnant women and lactating mothers",
+      "age_min": 19,
+      "states": "all",
+      "requirement": "First child (₹5,000 in two installments), second child if girl (₹6,000 one installment). Not in regular government employment."
+    },
+    "benefits": "Cash incentive ₹5,000 for first child (₹1,000 on early registration, ₹2,000 after ANC, ₹2,000 after birth registration and immunization). ₹6,000 for second girl child.",
+    "documents": ["Aadhaar", "MCP Card", "Bank Account", "Birth Certificate"],
+    "link": "https://wcd.nic.in/"
+  },
+  {
+    "name": "Stand Up India Scheme",
+    "category": "Entrepreneurship",
+    "eligibility": {
+      "category": "SC/ST or Women entrepreneurs",
+      "age_min": 18,
+      "states": "all",
+      "requirement": "Greenfield project in manufacturing, trading or services. 51% shareholding for non-individual enterprises."
+    },
+    "benefits": "Bank loans ₹10 lakh to ₹1 crore. Composite loan (term + working capital). Repayment up to 7 years with 18 months moratorium. Credit guarantee under CGFSI.",
+    "documents": ["Identity Proof", "Address Proof", "Caste Certificate (if applicable)", "Business Plan", "Bank Statements"],
+    "link": "https://www.standupmitra.in/"
+  },
+  {
+    "name": "Startup India Scheme",
+    "category": "Startups",
+    "eligibility": {
+      "business_age": "Less than 10 years",
+      "turnover_max": 1000000000,
+      "states": "all",
+      "requirement": "DPIIT recognized, Private Limited/LLP/Partnership, innovative scalable business model"
+    },
+    "benefits": "3-year income tax exemption, 80% rebate on patent filing, fast-track IPR, self-certification under labour/environment laws, funding support via Fund of Funds, easier public procurement",
+    "documents": ["Incorporation Certificate", "PAN", "GST Registration", "Business Plan", "Pitch Deck"],
+    "link": "https://www.startupindia.gov.in/"
+  }
+]
