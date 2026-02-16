@@ -1,245 +1,177 @@
 import streamlit as st
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_chroma import Chroma
+from langchain_core.documents import Document
 from dotenv import load_dotenv
 import os
 import json
 
-# Load environment
 load_dotenv()
 
-# Function to filter eligible schemes
+# Filter function (same as before)
 def filter_eligible_schemes(schemes, profile):
-    """
-    Filter schemes based on user profile.
-    Returns list of schemes the user qualifies for.
-    """
     eligible = []
-    
     for scheme in schemes:
         elig = scheme['eligibility']
         is_eligible = True
         
-        # Check age minimum
-        if 'age_min' in elig:
-            if profile['age'] < elig['age_min']:
-                is_eligible = False
-                continue
-        
-        # Check age maximum
-        if 'age_max' in elig:
-            if profile['age'] > elig['age_max']:
-                is_eligible = False
-                continue
-        
-        # Check income (handle different income fields)
-        if 'income_max' in elig:
-            if profile['income'] > elig['income_max']:
-                is_eligible = False
-                continue
-        
-        # For PMAY - check EWS/LIG/MIG categories
+        if 'age_min' in elig and profile['age'] < elig['age_min']:
+            is_eligible = False
+            continue
+        if 'age_max' in elig and profile['age'] > elig['age_max']:
+            is_eligible = False
+            continue
+        if 'income_max' in elig and profile['income'] > elig['income_max']:
+            is_eligible = False
+            continue
         if 'income_max_EWS' in elig:
-            # Check if income fits in ANY category
             max_allowed = elig.get('income_max_MIG', elig.get('income_max_LIG', elig.get('income_max_EWS', 0)))
             if profile['income'] > max_allowed:
                 is_eligible = False
                 continue
+        if 'occupation' in elig and profile.get('occupation'):
+            if profile['occupation'].lower() not in elig['occupation'].lower():
+                is_eligible = False
+                continue
+        if 'gender' in elig and profile.get('gender'):
+            if profile['gender'].lower() not in elig['gender'].lower():
+                is_eligible = False
+                continue
         
-        # Check occupation
-        if 'occupation' in elig:
-            if profile.get('occupation'):  # Only check if user selected occupation
-                if profile['occupation'].lower() not in elig['occupation'].lower():
-                    is_eligible = False
-                    continue
-        
-        # Check gender
-        if 'gender' in elig:
-            if profile.get('gender'):  # Only check if user selected gender
-                if profile['gender'].lower() not in elig['gender'].lower():
-                    is_eligible = False
-                    continue
-        
-        # If passed all checks, add to eligible list
         if is_eligible:
             eligible.append(scheme)
     
     return eligible
 
-# Load schemes from JSON file
+# Load schemes
 @st.cache_data
 def load_schemes():
     with open('schemes.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
-# Initialize Gemini
+# Initialize LLM
 @st.cache_resource
 def init_llm():
     return ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
-        google_api_key=os.getenv("GOOGLE_API_KEY"),
+        model="gemini-3-flash-preview",
         temperature=0.3
     )
 
-# Page config
+# Create retriever (LANGCHAIN WAY!)
+@st.cache_resource
+def create_retriever(_schemes):
+    """
+    Create Chroma retriever from schemes JSON
+    Pure LangChain approach
+    """
+    # Convert schemes to Documents
+    docs = [
+        Document(
+            page_content=f"{s['name']}: {s['benefits']} | Eligibility: {s['eligibility']} | Docs: {s['documents']}",
+            metadata={"name": s['name'], "category": s['category'], "link": s['link']}
+        )
+        for s in _schemes
+    ]
+    
+    # Create embeddings
+    embeddings = GoogleGenerativeAIEmbeddings(
+        model="gemini-embedding-001",
+    )
+    
+    # Create vectorstore and return retriever
+    vectorstore = Chroma.from_documents(
+        documents=docs,
+        embedding=embeddings,
+        persist_directory="./chroma_db"
+    )
+    
+    return vectorstore.as_retriever(search_kwargs={"k": 3})
+
+# Page setup
 st.set_page_config(page_title="JanAI", page_icon="🇮🇳")
-
-# Title
 st.title("🇮🇳 JanAI - Government Scheme Assistant")
-st.markdown("### Find Government Schemes You Qualify For")
 
-# Load data FIRST
+# Load everything
 schemes = load_schemes()
 llm = init_llm()
+retriever = create_retriever(schemes)  # Direct retriever!
 
-# Sidebar for user inputs
+# Sidebar
 st.sidebar.header("📋 Your Profile")
+age = st.sidebar.number_input("Age", 0, 100, 25)
+income = st.sidebar.number_input("Annual Income (₹)", 0, 10000000, 300000, 50000)
+state = st.sidebar.selectbox("State", ["Maharashtra", "Karnataka", "Delhi"])
+occupation = st.sidebar.selectbox("Occupation", ["", "Farmer", "Street Vendor", "Artisan", "Student", "Self-Employed"])
+gender = st.sidebar.selectbox("Gender", ["", "Male", "Female", "Other"])
 
-age = st.sidebar.number_input("Age", min_value=0, max_value=100, value=25)
-income = st.sidebar.number_input(
-    "Annual Income (₹)", 
-    min_value=0, 
-    max_value=10000000, 
-    value=300000,
-    step=50000
-)
-state = st.sidebar.selectbox(
-    "State",
-    ["Maharashtra", "Karnataka", "Delhi", "Tamil Nadu", "Gujarat", "Uttar Pradesh", "All States"]
-)
-occupation = st.sidebar.selectbox(
-    "Occupation (Optional)",
-    ["", "Farmer", "Street Vendor", "Artisan", "Student", "Self-Employed", "Salaried", "Unemployed"]
-)
-gender = st.sidebar.selectbox(
-    "Gender (Optional)",
-    ["", "Male", "Female", "Other"]
-)
-
-# Create tabs
+# Tabs
 tab1, tab2, tab3 = st.tabs(["🎯 Find Schemes", "💬 Ask Questions", "📚 Browse All"])
 
-# TAB 1: Find Schemes
+# TAB 1: Find Schemes (same as before)
 with tab1:
     st.subheader("Schemes You May Be Eligible For")
     
     if st.button("🔍 Find My Schemes", type="primary"):
-        with st.spinner("Analyzing your profile..."):
-            
-            # Create profile dictionary
-            profile = {
-                'age': age,
-                'income': income,
-                'state': state,
-                'occupation': occupation,
-                'gender': gender
-            }
-            
-            # Filter eligible schemes
-            eligible_schemes = filter_eligible_schemes(schemes, profile)
-            
-            if eligible_schemes:
-                st.success(f"✅ Found **{len(eligible_schemes)}** schemes you qualify for!")
-                
-                # Show each eligible scheme
-                for idx, scheme in enumerate(eligible_schemes, 1):
-                    with st.expander(
-                        f"**{idx}. {scheme['name']}** - {scheme['category']}", 
-                        expanded=(idx==1)
-                    ):
-                        
-                        # Benefits
-                        st.markdown("**💰 Benefits:**")
-                        st.info(scheme['benefits'])
-                        
-                        # Why you qualify
-                        st.markdown("**✅ Why You Qualify:**")
-                        reasons = []
-                        elig = scheme['eligibility']
-                        
-                        if 'age_min' in elig:
-                            reasons.append(f"Your age ({age}) meets the minimum requirement ({elig['age_min']})")
-                        
-                        if 'income_max' in elig:
-                            reasons.append(f"Your income (₹{income:,}) is within the limit (₹{elig['income_max']:,})")
-                        
-                        if 'income_max_EWS' in elig:
-                            if income <= elig['income_max_EWS']:
-                                reasons.append(f"You qualify for EWS category (income ≤ ₹{elig['income_max_EWS']:,})")
-                            elif income <= elig.get('income_max_LIG', 0):
-                                reasons.append(f"You qualify for LIG category (income ≤ ₹{elig['income_max_LIG']:,})")
-                            elif income <= elig.get('income_max_MIG', 0):
-                                reasons.append(f"You qualify for MIG category (income ≤ ₹{elig['income_max_MIG']:,})")
-                        
-                        if 'occupation' in elig and occupation:
-                            reasons.append(f"Your occupation ({occupation}) matches the requirement")
-                        
-                        if 'gender' in elig and gender:
-                            reasons.append(f"Gender requirement met")
-                        
-                        for reason in reasons:
-                            st.caption(f"• {reason}")
-                        
-                        # Documents
-                        st.markdown("**📄 Required Documents:**")
-                        for doc in scheme['documents']:
-                            st.write(f"- {doc}")
-                        
-                        # Apply link
-                        st.markdown(f"**🔗 [Apply Online]({scheme['link']})**")
-            
-            else:
-                st.warning("😔 No schemes found matching your exact profile.")
-                st.info("💡 **Try:**\n- Adjusting your age or income\n- Selecting an occupation if applicable\n- Browse all schemes in the last tab")
+        profile = {'age': age, 'income': income, 'state': state, 'occupation': occupation, 'gender': gender}
+        eligible = filter_eligible_schemes(schemes, profile)
+        
+        if eligible:
+            st.success(f"✅ Found {len(eligible)} schemes!")
+            for idx, scheme in enumerate(eligible, 1):
+                with st.expander(f"{idx}. {scheme['name']}", expanded=(idx==1)):
+                    st.info(scheme['benefits'])
+                    st.write(f"**Documents:** {', '.join(scheme['documents'])}")
+                    st.link_button("Apply", scheme['link'])
+        else:
+            st.warning("No schemes found. Try adjusting your profile.")
 
-# TAB 2: Ask Questions
+# TAB 2: Ask Questions (USING RETRIEVER!)
+# TAB 2: Ask Questions (SIMPLEST WORKING VERSION)
+# TAB 2: Ask Questions (FIXED VERSION)
 with tab2:
-    st.subheader("💬 Ask Me Anything")
+    st.subheader("💬 Ask Questions About Schemes")
     
-    question = st.text_input(
-        "Ask your question:",
-        placeholder="e.g., What schemes are available for farmers?"
+    question = st.text_area(
+        "Your question:",
+        placeholder="e.g., What schemes are available for farmers?",
+        height=100
     )
     
-    if question:
-        with st.spinner("Thinking..."):
-            # Create simple prompt with all schemes context
-            schemes_text = "\n\n".join([
-                f"Scheme: {s['name']}\nCategory: {s['category']}\nBenefits: {s['benefits']}\nEligibility: {s['eligibility']}"
-                for s in schemes
-            ])
+    if st.button("🔎 Ask", type="primary") and question:
+        with st.spinner("Searching schemes..."):
             
-            prompt = f"""
-You are a helpful assistant for Indian government schemes.
+            # Step 1: Get relevant schemes (FIXED!)
+            relevant_docs = retriever.invoke(question)  # Changed from get_relevant_documents
+            
+            # Step 2: Build context
+            context = ""
+            for doc in relevant_docs:
+                context += f"\n{doc.page_content}\n"
+            
+            # Step 3: Ask LLM with context
+            full_prompt = f"""
+You are helping someone find Indian government schemes.
 
-Available schemes:
-{schemes_text}
+Here are the most relevant schemes:
+{context}
 
-User question: {question}
+User's question: {question}
 
-Provide a clear, helpful answer based on the schemes above. Be specific and mention scheme names.
+Provide a helpful answer mentioning specific scheme names and key benefits.
             """
             
-            response = llm.invoke(prompt)
-            st.write(response.content)
-
-# TAB 3: Browse All
-with tab3:
-    st.subheader("📚 Browse All Schemes")
-    
-    # Category filter
-    categories = ["All"] + sorted(list(set([s['category'] for s in schemes])))
-    selected_cat = st.selectbox("Filter by Category", categories)
-    
-    if selected_cat != "All":
-        filtered_schemes = [s for s in schemes if s['category'] == selected_cat]
-    else:
-        filtered_schemes = schemes
-    
-    st.caption(f"Showing {len(filtered_schemes)} of {len(schemes)} schemes")
-    
-    # Display schemes
-    for scheme in filtered_schemes:
-        with st.expander(f"**{scheme['name']}** - {scheme['category']}"):
-            st.write(f"**Benefits:** {scheme['benefits']}")
-            st.write(f"**Documents:** {', '.join(scheme['documents'])}")
-            st.markdown(f"**[Apply Here]({scheme['link']})**")
+            answer = llm.invoke(full_prompt)
+            
+            # Step 4: Display results
+            # Step 5: Show source schemes
+            st.divider()
+            st.markdown("**📚 Relevant Schemes Found:**")
+            
+            for idx, doc in enumerate(relevant_docs, 1):
+                with st.expander(f"{idx}. {doc.metadata['name']} - {doc.metadata['category']}"):
+                    # Get full scheme details
+                    full_scheme = next((s for s in schemes if s['name'] == doc.metadata['name']), None)
+                    if full_scheme:
+                        st.write(f"**Benefits:** {full_scheme['benefits']}")
+                        st.write(f"**Documents:** {', '.join(full_scheme['documents'])}")
+                        st.link_button("Apply Now", doc.metadata['link'], use_container_width=True)
