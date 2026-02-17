@@ -10,6 +10,9 @@ __pycache__/
 # Virtual environment
 .venv/
 env/
+.env
+.streamlit/secrets.toml
+chroma_db/
 
 # Chroma database (will recreate on deploy)
 chroma_db/
