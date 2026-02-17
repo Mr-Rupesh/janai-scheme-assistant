@@ -16,3 +16,4 @@ python-dotenv
 
 # Required libraries
 streamlit
+langchain-chroma
