@@ -16,3 +16,9 @@ python-dotenv
 
 # Required libraries
 streamlit
+
+
+langchain-community
+huggingface-hub
+faiss-cpu
+python-dotenv
