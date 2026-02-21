@@ -8,7 +8,11 @@ import os
 import json
 
 load_dotenv()
-
+import os
+try:
+    os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+except:
+    pass
 # ============================================
 # API KEY HANDLER (works locally + cloud)
 # ============================================
@@ -73,7 +77,7 @@ def init_llm():
         task="conversational",
         temperature=0.3,
         max_new_tokens=512,
-        huggingfacehub_api_token=get_api_key(),
+        huggingfacehub_api_token=token,
     )
     return ChatHuggingFace(llm=llm)
 
@@ -90,7 +94,7 @@ def create_retriever(_schemes):
         for s in _schemes
     ]
 
-    # ✅ Updated class
+
     embeddings = HuggingFaceEndpointEmbeddings(
         model="sentence-transformers/all-MiniLM-L6-v2",
         huggingfacehub_api_token=get_api_key(),
