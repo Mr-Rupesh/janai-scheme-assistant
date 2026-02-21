@@ -1,6 +1,7 @@
 import streamlit as st
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
-from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEndpoint, ChatHuggingFace
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain_core.documents import Document
 from dotenv import load_dotenv
 import os
@@ -13,9 +14,9 @@ load_dotenv()
 # ============================================
 def get_api_key():
     try:
-        return st.secrets["GOOGLE_API_KEY"]
+        return st.secrets["HUGGINGFACEHUB_API_TOKEN"]
     except:
-        return os.getenv("GOOGLE_API_KEY")
+        return os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # ============================================
 # FILTER FUNCTION
@@ -67,11 +68,14 @@ def load_schemes():
 # ============================================
 @st.cache_resource
 def init_llm():
-    return ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
-        google_api_key=get_api_key(),  # FIXED!
-        temperature=0.3
+    llm = HuggingFaceEndpoint(
+        repo_id="deepseek-ai/DeepSeek-V3.2",
+        task="conversational",
+        temperature=0.3,
+        max_new_tokens=512,
+        huggingfacehub_api_token=get_api_key(),
     )
+    return ChatHuggingFace(llm=llm)
 
 # ============================================
 # CREATE RETRIEVER
@@ -85,18 +89,14 @@ def create_retriever(_schemes):
         )
         for s in _schemes
     ]
-    
-    embeddings = GoogleGenerativeAIEmbeddings(
-        model="gemini-embedding-001",  
-        google_api_key=get_api_key()        
+
+    # ✅ Updated class
+    embeddings = HuggingFaceEndpointEmbeddings(
+        model="sentence-transformers/all-MiniLM-L6-v2",
+        huggingfacehub_api_token=get_api_key(),
     )
-    
-    vectorstore = Chroma.from_documents(
-        documents=docs,
-        embedding=embeddings
-      
-    )
-    
+
+    vectorstore = FAISS.from_documents(documents=docs, embedding=embeddings)
     return vectorstore.as_retriever(search_kwargs={"k": 3})
 
 # ============================================
