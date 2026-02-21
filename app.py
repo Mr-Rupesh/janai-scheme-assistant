@@ -72,6 +72,7 @@ def load_schemes():
 # ============================================
 @st.cache_resource
 def init_llm():
+    token = get_api_key()
     llm = HuggingFaceEndpoint(
         repo_id="deepseek-ai/DeepSeek-V3.2",
         task="conversational",
